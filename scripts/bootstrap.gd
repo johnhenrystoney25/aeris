@@ -19,6 +19,8 @@ func _ready() -> void:
     _ensure_action("ability_size_down", [KEY_Z])
     _ensure_action("ability_size_up", [KEY_X])
     _ensure_action("portal_use", [KEY_E])
+    _ensure_action("energy_blast", [KEY_C])
+    _ensure_action("ground_slam", [KEY_G])
 
 func _ensure_action(action: StringName, keys: Array) -> void:
     if not InputMap.has_action(action):
