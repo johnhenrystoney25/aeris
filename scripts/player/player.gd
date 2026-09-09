@@ -1,17 +1,36 @@
 extends CharacterBody3D
 class_name MultiversePlayer
 
-## High-mobility superhero controller for THE MULTIVERSE.
-## Camera-relative movement, reliable floor recovery, readable flight, size-aware physics,
-## first/third-person presentation, stamina, boost, super-jump, and combat feedback.
+## High-mobility superhero traversal controller for THE MULTIVERSE.
+## Ground movement, super jump, dash/dodge, flight, boost, wall traversal,
+## safe recovery, camera-relative controls, and size-aware movement.
 
+@export_category("Ground Movement")
 @export var walk_speed := 8.0
 @export var sprint_speed := 16.0
-@export var flight_speed := 22.0
-@export var flight_boost_speed := 48.0
+@export var super_sprint_speed := 28.0
+@export var acceleration := 42.0
+@export var air_acceleration := 24.0
+@export var ground_friction := 34.0
 @export var jump_velocity := 12.0
 @export var super_jump_velocity := 24.0
 @export var gravity := 28.0
+
+@export_category("Flight")
+@export var flight_speed := 22.0
+@export var flight_boost_speed := 56.0
+@export var flight_acceleration := 7.0
+@export var flight_vertical_speed := 18.0
+
+@export_category("Traversal")
+@export var dash_speed := 42.0
+@export var dash_duration := 0.18
+@export var wall_run_speed := 24.0
+@export var wall_climb_speed := 12.0
+@export var wall_probe_distance := 1.25
+@export var wall_grace_time := 0.18
+
+@export_category("Systems")
 @export var mouse_sensitivity := 0.0025
 @export var max_stamina := 100.0
 
@@ -24,8 +43,11 @@ var _pitch := -0.12
 var _yaw := 0.0
 var _attack_cooldown := 0.0
 var _teleport_cooldown := 0.0
-var _dodge_timer := 0.0
+var _dash_timer := 0.0
 var _boost_timer := 0.0
+var _wall_grace_timer := 0.0
+var _wall_normal := Vector3.ZERO
+var _last_move_direction := Vector3.FORWARD
 var _original_scale := Vector3.ONE
 var _last_safe_position := Vector3.ZERO
 
@@ -52,7 +74,6 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
     if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
         _yaw -= event.relative.x * mouse_sensitivity
-        # Mouse up = camera up. This is deliberately not inverted.
         _pitch = clamp(_pitch - event.relative.y * mouse_sensitivity, -1.35, 0.85)
         rotation.y = _yaw
         pivot.rotation.x = _pitch
@@ -64,9 +85,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(delta: float) -> void:
     _attack_cooldown = maxf(0.0, _attack_cooldown - delta)
     _teleport_cooldown = maxf(0.0, _teleport_cooldown - delta)
-    _dodge_timer = maxf(0.0, _dodge_timer - delta)
+    _dash_timer = maxf(0.0, _dash_timer - delta)
     _boost_timer = maxf(0.0, _boost_timer - delta)
-    stamina = minf(max_stamina, stamina + (24.0 if not is_flying else 12.0) * delta)
+    _wall_grace_timer = maxf(0.0, _wall_grace_timer - delta)
+
+    stamina = minf(max_stamina, stamina + (18.0 if not is_flying else 10.0) * delta)
 
     if Input.is_action_just_pressed("toggle_camera"):
         camera_mode = 1 - camera_mode
@@ -82,7 +105,7 @@ func _physics_process(delta: float) -> void:
     if Input.is_action_just_pressed("attack"):
         _attack()
     if Input.is_action_just_pressed("dodge"):
-        _dodge_timer = 0.22
+        _start_dash()
     if Input.is_action_just_pressed("super_jump") and not is_flying:
         _super_jump()
     if Input.is_action_pressed("flight_boost") and is_flying and stamina > 4.0:
@@ -97,17 +120,22 @@ func _physics_process(delta: float) -> void:
     right.y = 0.0
     forward = forward.normalized()
     right = right.normalized()
-    # With move_back as negative-Y and move_forward as positive-Y, W/Up is +Y here.
-    # Adding +forward makes W move along camera forward (-Z), while S moves backward.
-    var direction := (right * input_vec.x + forward * input_vec.y).normalized()
+    var direction := (right * input_vec.x + forward * input_vec.y)
+    if direction.length_squared() > 0.01:
+        direction = direction.normalized()
+        _last_move_direction = direction
+
     var size_multiplier := lerpf(0.55, 1.35, inverse_lerp(-2.0, 2.0, size_level))
-    var speed := sprint_speed if Input.is_action_pressed("sprint") else walk_speed
+    var speed := walk_speed
+    if Input.is_action_pressed("sprint"):
+        speed = super_sprint_speed if stamina > 8.0 else sprint_speed
     speed *= size_multiplier
 
     if is_flying:
-        _fly(delta, direction, speed)
+        _fly(delta, direction)
     else:
         _walk(delta, direction, speed)
+        _update_wall_traversal(delta, direction, speed)
 
     move_and_slide()
     _recover_if_fallen()
@@ -120,30 +148,105 @@ func _walk(delta: float, direction: Vector3, speed: float) -> void:
         velocity.y = jump_velocity * lerpf(0.8, 1.5, inverse_lerp(-2.0, 2.0, size_level))
     else:
         velocity.y = -0.8
-    velocity.x = move_toward(velocity.x, direction.x * speed, 42.0 * delta)
-    velocity.z = move_toward(velocity.z, direction.z * speed, 42.0 * delta)
-    if _dodge_timer > 0.0 and direction.length_squared() > 0.01:
-        velocity.x = direction.x * speed * 2.7
-        velocity.z = direction.z * speed * 2.7
 
-func _fly(delta: float, direction: Vector3, speed: float) -> void:
+    var accel := acceleration if is_on_floor() else air_acceleration
+    if direction.length_squared() > 0.01:
+        velocity.x = move_toward(velocity.x, direction.x * speed, accel * delta)
+        velocity.z = move_toward(velocity.z, direction.z * speed, accel * delta)
+    else:
+        velocity.x = move_toward(velocity.x, 0.0, ground_friction * delta)
+        velocity.z = move_toward(velocity.z, 0.0, ground_friction * delta)
+
+    if Input.is_action_pressed("sprint") and direction.length_squared() > 0.01 and is_on_floor():
+        stamina = maxf(0.0, stamina - 8.0 * delta)
+
+    if _dash_timer > 0.0:
+        velocity.x = _last_move_direction.x * dash_speed * size_multiplier
+        velocity.z = _last_move_direction.z * dash_speed * size_multiplier
+        velocity.y = minf(velocity.y, 4.0)
+
+func _fly(delta: float, direction: Vector3) -> void:
     var look_dir := -pivot.global_transform.basis.z.normalized()
     var vertical := 0.0
     if Input.is_action_pressed("jump"):
         vertical += 1.0
     if Input.is_action_pressed("flight_down"):
         vertical -= 1.0
-    if absf(vertical) < 0.1 and absf(look_dir.y) > 0.35 and direction.length_squared() > 0.01:
-        vertical = look_dir.y * 0.65
-    var fly_dir := direction + Vector3.UP * vertical
+
+    # Looking upward/downward while moving also gives flight pitch control.
+    if absf(vertical) < 0.1 and direction.length_squared() > 0.01 and absf(look_dir.y) > 0.3:
+        vertical = look_dir.y * 0.8
+
+    var fly_dir := direction
     if fly_dir.length_squared() > 0.01:
         fly_dir = fly_dir.normalized()
+    fly_dir += Vector3.UP * vertical
+    if fly_dir.length_squared() > 0.01:
+        fly_dir = fly_dir.normalized()
+
+    var size_multiplier := lerpf(0.65, 1.3, inverse_lerp(-2.0, 2.0, size_level))
     var actual_speed := flight_boost_speed if _boost_timer > 0.0 else flight_speed
-    actual_speed *= lerpf(0.6, 1.4, inverse_lerp(-2.0, 2.0, size_level))
-    velocity = velocity.lerp(fly_dir * actual_speed, minf(1.0, delta * 7.0))
+    actual_speed *= size_multiplier
+
+    var target_velocity := fly_dir * actual_speed
+    if absf(vertical) > 0.1 and direction.length_squared() < 0.01:
+        target_velocity = Vector3.UP * vertical * flight_vertical_speed
+
+    velocity = velocity.lerp(target_velocity, minf(1.0, delta * flight_acceleration))
     if fly_dir.length_squared() > 0.01:
         rotation.y = lerp_angle(rotation.y, atan2(-fly_dir.x, -fly_dir.z), minf(1.0, delta * 5.0))
+
     flight_fx.emitting = true
+
+func _update_wall_traversal(delta: float, direction: Vector3, speed: float) -> void:
+    if is_on_floor():
+        _wall_grace_timer = 0.0
+        return
+
+    var space := get_world_3d().direct_space_state
+    var origins := [global_position + Vector3.UP * 0.65, global_position + Vector3.UP * 1.25]
+    var candidates := [global_transform.basis.x, -global_transform.basis.x, -global_transform.basis.z]
+    var found := false
+
+    for origin in origins:
+        for normal_probe in candidates:
+            var query := PhysicsRayQueryParameters3D.create(origin, origin + normal_probe * wall_probe_distance)
+            query.exclude = [self]
+            var hit := space.intersect_ray(query)
+            if not hit.is_empty():
+                var normal: Vector3 = hit.normal
+                if absf(normal.y) < 0.35:
+                    _wall_normal = normal
+                    found = true
+                    break
+        if found:
+            break
+
+    if not found:
+        return
+
+    _wall_grace_timer = wall_grace_time
+    if Input.is_action_pressed("sprint") and stamina > 0.0:
+        var along_wall := Vector3.UP
+        if direction.length_squared() > 0.01:
+            along_wall = (direction - _wall_normal * direction.dot(_wall_normal)).normalized()
+        velocity = velocity.lerp(along_wall * wall_run_speed * lerpf(0.7, 1.25, inverse_lerp(-2.0, 2.0, size_level)), minf(1.0, delta * 8.0))
+        stamina = maxf(0.0, stamina - 14.0 * delta)
+        _update_status_ui("WALL RUN")
+    elif Input.is_action_pressed("jump") and stamina > 0.0:
+        velocity.y = wall_climb_speed
+        velocity = velocity.lerp(Vector3.UP * wall_climb_speed, minf(1.0, delta * 5.0))
+        stamina = maxf(0.0, stamina - 10.0 * delta)
+        _update_status_ui("WALL CLIMB")
+
+func _start_dash() -> void:
+    if is_flying or stamina < 12.0:
+        return
+    _dash_timer = dash_duration
+    stamina -= 12.0
+    if _last_move_direction.length_squared() < 0.01:
+        _last_move_direction = -global_transform.basis.z
+    _update_status_ui("DASH")
 
 func _toggle_flight() -> void:
     is_flying = not is_flying
