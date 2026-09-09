@@ -1,11 +1,28 @@
 {
   "region": "Federal Way - Tacoma, Washington",
-  "source": "OpenStreetMap",
+  "source": "OpenStreetMap + official municipal GIS where licensing permits",
   "bounds": {
     "south": 47.15,
     "west": -122.55,
     "north": 47.36,
     "east": -122.20
   },
-  "notes": "Target geographic extent for the THE MULTIVERSE real-world Pacific Northwest prototype. Download an OSM extract covering these bounds, then convert it with tools/osm_to_region.py."
+  "coordinate_system": "WGS84 geographic source data; convert to local metric game coordinates",
+  "geographic_fidelity": {
+    "streets": true,
+    "road_classes": true,
+    "building_footprints": true,
+    "building_heights_when_available": true,
+    "parks": true,
+    "water": true,
+    "railways": true,
+    "terrain": true,
+    "parcels_reference": true
+  },
+  "sources": [
+    "OpenStreetMap",
+    "City of Federal Way GIS building outlines / parcels / contours / impervious surfaces",
+    "City of Tacoma / Tacoma Public Utilities GIS road and structure layers"
+  ],
+  "notes": "Build the playable geography from recorded GIS geometry rather than a fictional city layout. Do not copy Google Maps imagery, branding, or proprietary map tiles. Game art, interiors, props, materials, traffic, NPCs, and destruction remain original."
 }
