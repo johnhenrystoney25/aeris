@@ -9,7 +9,7 @@ class_name HighDetailCharacterBridge
 @export_category("Asset")
 @export var character_scene: PackedScene
 @export var character_scale := 1.0
-@export var hide_fallback_body := false
+@export var hide_fallback_body := true
 
 @export_category("Animation")
 @export var animation_tree_path: NodePath
@@ -33,6 +33,7 @@ func _ready() -> void:
         return
     _spawn_character()
     _cache_animation_system()
+    _hide_fallback_visuals()
 
 func _spawn_character() -> void:
     if character_scene == null:
@@ -45,10 +46,21 @@ func _spawn_character() -> void:
     _character.scale = Vector3.ONE * character_scale
     add_child(_character)
 
-    if hide_fallback_body:
-        var fallback := _actor.get_node_or_null("Body") as MeshInstance3D
-        if fallback:
-            fallback.visible = false
+func _hide_fallback_visuals() -> void:
+    if not hide_fallback_body or _actor == null:
+        return
+
+    # The old procedural body is made from many separate MeshInstance3D nodes,
+    # not one mesh. Hide those presentation meshes together so they cannot
+    # overlap the rigged GLB and produce the malformed/double-body appearance.
+    for child in _actor.get_children():
+        if child == self:
+            continue
+        if child is MeshInstance3D:
+            (child as MeshInstance3D).visible = false
+
+    # First-person arms are intentionally left alone; they are a camera-space
+    # presentation layer and are not part of the third-person replacement body.
 
 func _cache_animation_system() -> void:
     if _character == null:
@@ -63,13 +75,15 @@ func _process(_delta: float) -> void:
         return
 
     if inherit_player_scale:
-        # Player scale remains the authoritative size-change system.
+        # The player root remains the authoritative size-change system.
+        # The GLB is uniformly scaled locally; the actor's uniform scale is
+        # inherited automatically by this child.
         _character.scale = Vector3.ONE * character_scale
 
-    var velocity := _actor.velocity
-    var planar_speed := Vector2(velocity.x, velocity.z).length()
-    var flying := _actor.get("is_flying") == true
-    var grounded := _actor.is_on_floor()
+    var velocity: Vector3 = _actor.velocity
+    var planar_speed: float = Vector2(velocity.x, velocity.z).length()
+    var flying: bool = _actor.get("is_flying") == true
+    var grounded: bool = _actor.is_on_floor()
     var state := _state_for(planar_speed, flying, grounded)
 
     if state != _last_state:
