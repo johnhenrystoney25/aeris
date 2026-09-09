@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RealityData" load_steps=2 format=3]
+
+[ext_resource path="res://scripts/reality/reality_data.gd" type="Script" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "micro"
+display_name = "Micro Reality"
+gravity = 0.8
+time_scale = 1.0
+size_multiplier = 0.35
+destruction_level = 0.05
+technology_level = 0.4
+available_abilities = ["super_strength", "teleport", "size_change"]
