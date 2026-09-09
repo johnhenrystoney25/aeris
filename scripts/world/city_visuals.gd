@@ -6,8 +6,6 @@ extends Node3D
 @export var animate_time := true
 
 var _time := 16.5
-@onready var sun: DirectionalLight3D = get_node_or_null("Sun")
-@onready var environment_node: WorldEnvironment = get_node_or_null("WorldEnvironment")
 
 func _ready() -> void:
     _time = start_time
@@ -21,6 +19,8 @@ func _process(delta: float) -> void:
 
 func _apply_lighting() -> void:
     var daylight := clampf(sin((_time - 6.0) / 24.0 * TAU), 0.0, 1.0)
+    var sun := get_parent().get_node_or_null("Sun") as DirectionalLight3D
+    var environment_node := get_parent().get_node_or_null("WorldEnvironment") as WorldEnvironment
     if sun:
         var angle := (_time - 6.0) / 24.0 * TAU
         sun.rotation_degrees = Vector3(-18.0 - daylight * 54.0, -35.0 + sin(angle) * 20.0, 0.0)
