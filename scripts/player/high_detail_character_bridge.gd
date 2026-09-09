@@ -2,19 +2,9 @@ extends Node3D
 class_name HighDetailCharacterBridge
 
 ## Asset-ready bridge for the next-generation original superhero body.
-##
-## Gameplay remains owned by MultiversePlayer. This layer is intentionally
-## presentation-only so replacing the current primitive body with a rigged
-## GLB does not change movement, flight, teleport, size, or combat code.
-##
-## Expected future hierarchy for the imported character:
-## CharacterRoot
-##   Skeleton3D
-##   AnimationPlayer
-##   AnimationTree (optional)
-##
-## The bridge can drive either an AnimationTree or named AnimationPlayer
-## animations when the real asset is installed.
+## Gameplay remains owned by MultiversePlayer. This layer is presentation-only
+## so replacing the current primitive body with a rigged GLB does not change
+## movement, flight, teleport, size, or combat code.
 
 @export_category("Asset")
 @export var character_scene: PackedScene
@@ -41,7 +31,6 @@ func _ready() -> void:
     if _actor == null:
         push_warning("HighDetailCharacterBridge must be a child of the player CharacterBody3D.")
         return
-
     _spawn_character()
     _cache_animation_system()
 
@@ -66,7 +55,6 @@ func _cache_animation_system() -> void:
         return
     _animation_tree = _character.get_node_or_null(animation_tree_path) as AnimationTree
     _animation_player = _character.get_node_or_null(animation_player_path) as AnimationPlayer
-
     if _animation_tree:
         _animation_tree.active = true
 
@@ -75,7 +63,7 @@ func _process(_delta: float) -> void:
         return
 
     if inherit_player_scale:
-        # Player scale is the authoritative size-change system.
+        # Player scale remains the authoritative size-change system.
         _character.scale = Vector3.ONE * character_scale
 
     var velocity := _actor.velocity
@@ -105,8 +93,6 @@ func _play_state(state: String) -> void:
     if _animation_player == null:
         return
 
-    # Animation names are deliberately conventional. The bridge only calls
-    # clips that actually exist, so missing clips never break gameplay.
     var candidates := {
         "idle": ["idle", "Idle", "idle_loop"],
         "walk": ["walk", "Walk", "walk_forward"],
@@ -124,7 +110,7 @@ func _drive_blend(planar_speed: float, flying: bool) -> void:
     if _animation_tree == null:
         return
 
-    if _animation_tree.has_parameter(locomotion_parameter):
-        _animation_tree.set(locomotion_parameter, planar_speed)
-    if _animation_tree.has_parameter(speed_parameter):
-        _animation_tree.set(speed_parameter, 1.35 if flying else clampf(planar_speed / 8.0, 0.5, 2.2))
+    # AnimationTree silently ignores a parameter path that is not present in
+    # the imported asset, keeping the gameplay layer independent of the rig.
+    _animation_tree.set(locomotion_parameter, planar_speed)
+    _animation_tree.set(speed_parameter, 1.35 if flying else clampf(planar_speed / 8.0, 0.5, 2.2))
