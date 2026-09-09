@@ -161,8 +161,9 @@ func _walk(delta: float, direction: Vector3, speed: float) -> void:
         stamina = maxf(0.0, stamina - 8.0 * delta)
 
     if _dash_timer > 0.0:
-        velocity.x = _last_move_direction.x * dash_speed * size_multiplier
-        velocity.z = _last_move_direction.z * dash_speed * size_multiplier
+        var dash_size_multiplier := lerpf(0.55, 1.35, inverse_lerp(-2.0, 2.0, size_level))
+        velocity.x = _last_move_direction.x * dash_speed * dash_size_multiplier
+        velocity.z = _last_move_direction.z * dash_speed * dash_size_multiplier
         velocity.y = minf(velocity.y, 4.0)
 
 func _fly(delta: float, direction: Vector3) -> void:
