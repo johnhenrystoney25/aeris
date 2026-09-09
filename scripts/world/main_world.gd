@@ -1,7 +1,7 @@
 extends Node3D
 ## Main world coordinator for the recorded Federal Way -> Tacoma geography.
 
-@export var enable_geography_streaming := true
+@export var enable_geography_streaming := false
 @export var stream_interval := 0.75
 var _stream_clock := 0.0
 
@@ -25,5 +25,11 @@ func _process(delta: float) -> void:
 
 func travel_to_reality(scene_path: String, spawn_position: Vector3) -> void:
     var scene := load(scene_path)
-    if scene:
-        get_tree().change_scene_to_packed(scene)
+    if scene == null:
+        push_error("Could not load reality scene: %s" % scene_path)
+        return
+    get_tree().change_scene_to_packed(scene)
+    await get_tree().process_frame
+    var player := get_tree().current_scene.get_node_or_null("Player")
+    if player:
+        player.global_position = spawn_position
