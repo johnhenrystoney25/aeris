@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource path="res://scripts/world/main_world.gd" type="Script" id="1"]
 [ext_resource path="res://scripts/world/osm_region_runtime.gd" type="Script" id="2"]
@@ -6,6 +6,8 @@
 [ext_resource path="res://scripts/combat/enemy.gd" type="Script" id="4"]
 [ext_resource path="res://scripts/portal/portal.gd" type="Script" id="5"]
 [ext_resource path="res://scripts/world/city_visuals.gd" type="Script" id="6"]
+[ext_resource path="res://scripts/world/building_identity_dressing.gd" type="Script" id="7"]
+[ext_resource path="res://scripts/player/realistic_actor_motion.gd" type="Script" id="8"]
 
 [sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_Main"]
 sky_top_color = Color(0.055, 0.12, 0.26, 1)
@@ -86,6 +88,9 @@ chunk_size = 500.0
 stream_radius = 2
 collision_radius = 1
 enable_streaming = true
+[node name="BuildingIdentityDressing" type="Node3D" parent="RecordedGeography"]
+script = ExtResource("7")
+region_file = "res://data/geography/federal_way_tacoma_region.json"
 
 [node name="Ground" type="StaticBody3D" parent="."]
 collision_layer = 1
@@ -99,6 +104,8 @@ position = Vector3(0, -1, 0)
 
 [node name="Player" parent="." instance=ExtResource("3")]
 position = Vector3(0, 1.2, 12)
+[node name="RealisticActorMotion" type="Node3D" parent="Player"]
+script = ExtResource("8")
 
 [node name="Enemy" type="CharacterBody3D" parent="."]
 position = Vector3(0, 1.2, -6)
