@@ -1,30 +1,46 @@
-[gd_scene load_steps=14 format=3]
+[gd_scene load_steps=17 format=3]
 
 [ext_resource path="res://scripts/world/main_world.gd" type="Script" id="1"]
 [ext_resource path="res://scripts/world/osm_region_runtime.gd" type="Script" id="2"]
 [ext_resource path="res://scenes/player/player.tscn" type="PackedScene" id="3"]
 [ext_resource path="res://scripts/combat/enemy.gd" type="Script" id="4"]
 [ext_resource path="res://scripts/portal/portal.gd" type="Script" id="5"]
+[ext_resource path="res://scripts/world/city_visuals.gd" type="Script" id="6"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMaterial_Main"]
+sky_top_color = Color(0.015, 0.055, 0.16, 1)
+sky_horizon_color = Color(0.36, 0.52, 0.72, 1)
+ground_bottom_color = Color(0.015, 0.02, 0.035, 1)
+ground_horizon_color = Color(0.16, 0.19, 0.24, 1)
+sun_angle_max = 18.0
+
+[sub_resource type="Sky" id="Sky_Main"]
+sky_material = SubResource("SkyMaterial_Main")
+radiance_size = 3
 
 [sub_resource type="Environment" id="Environment_Main"]
 background_mode = 2
-background_energy_multiplier = 0.7
+sky = SubResource("Sky_Main")
+background_energy_multiplier = 0.85
 ambient_light_source = 3
-ambient_light_color = Color(0.42, 0.48, 0.58, 1)
-ambient_light_energy = 0.85
+ambient_light_color = Color(0.48, 0.56, 0.72, 1)
+ambient_light_energy = 0.95
 reflected_light_source = 2
+tonemap_mode = 2
+tonemap_exposure = 1.15
+tonemap_white = 2.0
 fog_enabled = true
-fog_light_color = Color(0.55, 0.62, 0.7, 1)
-fog_density = 0.0025
-fog_sky_affect = 0.65
+fog_light_color = Color(0.38, 0.47, 0.62, 1)
+fog_density = 0.0012
+fog_sky_affect = 0.45
 
 [sub_resource type="BoxShape3D" id="GroundShape"]
 size = Vector3(20000, 2, 20000)
 [sub_resource type="BoxMesh" id="GroundMesh"]
 size = Vector3(20000, 1, 20000)
 [sub_resource type="StandardMaterial3D" id="GroundMat"]
-albedo_color = Color(0.055, 0.07, 0.065, 1)
-roughness = 0.98
+albedo_color = Color(0.045, 0.11, 0.075, 1)
+roughness = 0.94
 
 [sub_resource type="CapsuleShape3D" id="EnemyShape"]
 radius = 0.5
@@ -33,7 +49,9 @@ height = 1.8
 radius = 0.5
 height = 1.8
 [sub_resource type="StandardMaterial3D" id="EnemyMat"]
-albedo_color = Color(0.75, 0.12, 0.1, 1)
+albedo_color = Color(0.8, 0.08, 0.08, 1)
+metallic = 0.1
+roughness = 0.45
 
 [sub_resource type="CylinderMesh" id="PortalRingMesh"]
 top_radius = 2.4
@@ -59,13 +77,21 @@ environment = SubResource("Environment_Main")
 rotation_degrees = Vector3(-52, -28, 0)
 light_energy = 1.2
 shadow_enabled = true
+directional_shadow_max_distance = 250.0
+
+[node name="CityVisuals" type="Node3D" parent="."]
+script = ExtResource("6")
 
 [node name="RecordedGeography" type="Node3D" parent="."]
 script = ExtResource("2")
 region_file = "res://data/geography/federal_way_tacoma_region.json"
 fallback_enabled = true
+visual_dressing = true
+create_building_collisions = true
 
 [node name="Ground" type="StaticBody3D" parent="."]
+collision_layer = 1
+collision_mask = 2
 [node name="Mesh" type="MeshInstance3D" parent="Ground"]
 mesh = SubResource("GroundMesh")
 material_override = SubResource("GroundMat")
@@ -79,6 +105,8 @@ position = Vector3(0, 1.2, 12)
 [node name="Enemy" type="CharacterBody3D" parent="."]
 position = Vector3(0, 1.2, -6)
 script = ExtResource("4")
+collision_layer = 1
+collision_mask = 3
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Enemy"]
 shape = SubResource("EnemyShape")
 position = Vector3(0, 0.9, 0)
@@ -100,13 +128,14 @@ material_override = SubResource("PortalMat")
 rotation_degrees = Vector3(90, 0, 0)
 [node name="PortalSign" type="Label3D" parent="Portal"]
 position = Vector3(0, 3, 0)
-text = "MICRO REALITY"
+text = "MICRO REALITY  [E]"
 font_size = 64
 outline_size = 8
+modulate = Color(0.35, 0.9, 1, 1)
 
 [node name="BuildMarker" type="Label3D" parent="."]
 position = Vector3(0, 10, 2)
-text = "FEDERAL WAY → TACOMA\nRECORDED-GEOGRAPHY BUILD\nBUILD 2026-09-09"
+text = "FEDERAL WAY → TACOMA\nRECORDED GEOGRAPHY / SUPERHERO SANDBOX\nBUILD 2026-09-09"
 font_size = 56
 outline_size = 12
 modulate = Color(0.2, 0.85, 1, 1)
@@ -116,3 +145,4 @@ position = Vector3(0, 8, -18)
 text = "THE MULTIVERSE // FEDERAL WAY → TACOMA"
 font_size = 72
 outline_size = 12
+modulate = Color(0.95, 0.95, 1, 1)
