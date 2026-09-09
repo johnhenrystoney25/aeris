@@ -19,6 +19,7 @@ var _last_vertical_speed := 0.0
 var _last_grounded := true
 var _base_positions: Dictionary = {}
 var _base_rotations: Dictionary = {}
+var _base_scales: Dictionary = {}
 
 @onready var actor: CharacterBody3D = get_parent()
 
@@ -27,6 +28,7 @@ func _ready() -> void:
         if child is Node3D:
             _base_positions[child.name] = child.position
             _base_rotations[child.name] = child.rotation
+            _base_scales[child.name] = child.scale
 
 func _process(delta: float) -> void:
     if not is_instance_valid(actor):
@@ -122,14 +124,15 @@ func _process(delta: float) -> void:
         hand_r.rotation.y = lerpf(hand_r.rotation.y, -sin(_time * 1.1) * 0.025, delta * 4.0)
 
     var squash := 1.0 - _impact * landing_squash
-    var stretch := 1.0 + _impact * landing_squash * 0.55
     if chest:
-        chest.scale.y = lerpf(chest.scale.y, chest.scale.y * squash, delta * 8.0)
+        var chest_base: Vector3 = _base_scales.get("Chest", chest.scale)
+        chest.scale = chest_base * Vector3(1.0, squash, 1.0)
     if abdomen:
-        abdomen.scale.y = lerpf(abdomen.scale.y, abdomen.scale.y * squash, delta * 8.0)
-    if size_level >= 2 and grounded and not moving:
-        if head:
-            head.position.y = lerpf(head.position.y, _base_positions.get("Head", head.position).y + sin(_time * 0.9) * 0.012, delta * 3.0)
+        var abdomen_base: Vector3 = _base_scales.get("Abdomen", abdomen.scale)
+        abdomen.scale = abdomen_base * Vector3(1.0, squash, 1.0)
+    if size_level >= 2 and grounded and not moving and head:
+        var head_base: Vector3 = _base_positions.get("Head", head.position)
+        head.position.y = lerpf(head.position.y, head_base.y + sin(_time * 0.9) * 0.012, delta * 3.0)
 
 func _set_rot(node: Node3D, x: float, y: float, z: float) -> void:
     if node == null:
