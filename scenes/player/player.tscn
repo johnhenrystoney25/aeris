@@ -139,7 +139,6 @@ position = Vector3(0, 1.65, 0)
 
 [node name="ThirdPersonCamera" type="Camera3D" parent="CameraPivot"]
 position = Vector3(0, 0.45, 6.2)
-rotation_degrees = Vector3(0, 180, 0)
 current = true
 fov = 74.0
 
