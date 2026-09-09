@@ -5,6 +5,7 @@ from pathlib import Path
 ROAD_CLASSES={"motorway","trunk","primary","secondary","tertiary","residential","unclassified","service","living_street","pedestrian"}
 PARK_TYPES={"park","garden","playground","recreation_ground","nature_reserve"}
 WATER_TYPES={"riverbank","reservoir","basin","lake","pond","water"}
+ROAD_WIDTH={"motorway":18.0,"trunk":16.0,"primary":13.0,"secondary":11.0,"tertiary":9.0,"residential":7.0,"unclassified":7.0,"service":5.0,"living_street":6.0,"pedestrian":5.0}
 def tags_of(el): return {x.attrib.get("k",""):x.attrib.get("v","") for x in el.findall("tag")}
 def height_of(t):
     try:
@@ -17,12 +18,12 @@ def main(src,dst):
     if not nodes: raise SystemExit("No nodes found in OSM extract")
     lat0=sum(v[0] for v in nodes.values())/len(nodes); lon0=sum(v[1] for v in nodes.values())/len(nodes); r=6378137.0
     def xy(lat,lon): return [math.radians(lon-lon0)*r*math.cos(math.radians(lat0)),-math.radians(lat-lat0)*r]
-    out={"schema":2,"source":"OpenStreetMap","origin":{"lat":lat0,"lon":lon0},"roads":[],"buildings":[],"parks":[],"water":[],"railways":[]}
+    out={"schema":3,"source":"OpenStreetMap","origin":{"lat":lat0,"lon":lon0},"roads":[],"buildings":[],"parks":[],"water":[],"railways":[]}
     for way in root.findall("way"):
         t=tags_of(way); refs=[x.attrib.get("ref") for x in way.findall("nd")]; pts=[xy(*nodes[k]) for k in refs if k in nodes]
         if len(pts)<2: continue
         h=t.get("highway")
-        if h in ROAD_CLASSES: out["roads"].append({"points":pts,"class":h,"name":t.get("name","")})
+        if h in ROAD_CLASSES: out["roads"].append({"points":pts,"class":h,"name":t.get("name",""),"width":ROAD_WIDTH.get(h,8.0)})
         if t.get("building") and len(pts)>=3: out["buildings"].append({"polygon":pts,"height":height_of(t),"type":t.get("building","yes"),"name":t.get("name","")})
         leisure=t.get("leisure"); land=t.get("landuse"); natural=t.get("natural"); water=t.get("water")
         if water in WATER_TYPES or natural=="water" or t.get("waterway")=="riverbank": out["water"].append({"polygon":pts,"type":water or natural or "water"})
