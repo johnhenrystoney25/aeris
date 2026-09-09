@@ -1,0 +1,10 @@
+# Local OSM extracts / generated geography (keep large source data out of Git history)
+data/geography/tiles/*.osm
+data/geography/tiles/*.xml
+data/geography/tiles/*.json
+data/geography/*_merged.osm
+# Local generated region/build outputs
+logs/
+builds/
+# Godot local/editor state
+.godot/
