@@ -1,0 +1,11 @@
+{
+  "region": "Federal Way - Tacoma, Washington",
+  "source": "OpenStreetMap",
+  "bounds": {
+    "south": 47.15,
+    "west": -122.55,
+    "north": 47.36,
+    "east": -122.20
+  },
+  "notes": "Target geographic extent for the THE MULTIVERSE real-world Pacific Northwest prototype. Download an OSM extract covering these bounds, then convert it with tools/osm_to_region.py."
+}
