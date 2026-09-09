@@ -72,6 +72,7 @@ scale = Vector3(0.35, 0.35, 0.35)
 [node name="ReturnPortal" type="Area3D" parent="."]
 position = Vector3(0, 2.2, -22)
 script = ExtResource("3")
+destination_scene = "res://scenes/city/city.tscn"
 [node name="CollisionShape3D" type="CollisionShape3D" parent="ReturnPortal"]
 shape = SubResource("PortalShape")
 rotation_degrees = Vector3(90, 0, 0)
