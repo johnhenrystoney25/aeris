@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=19 format=3]
 
 [ext_resource path="res://scripts/player/player.gd" type="Script" id="1"]
 
@@ -9,24 +9,57 @@ height = 1.8
 [sub_resource type="CapsuleMesh" id="BodyMesh"]
 radius = 0.45
 height = 1.8
+radial_segments = 20
+rings = 8
 
 [sub_resource type="StandardMaterial3D" id="BodyMat"]
-albedo_color = Color(0.12, 0.35, 0.9, 1)
-metallic = 0.15
-roughness = 0.45
+albedo_color = Color(0.06, 0.32, 0.72, 1)
+metallic = 0.25
+roughness = 0.32
 
 [sub_resource type="SphereMesh" id="HeadMesh"]
 radius = 0.34
 height = 0.68
+radial_segments = 20
+rings = 12
 
-[sub_resource type="StandardMaterial3D" id="HeadMat"]
-albedo_color = Color(0.55, 0.32, 0.2, 1)
-roughness = 0.7
+[sub_resource type="StandardMaterial3D" id="SkinMat"]
+albedo_color = Color(0.48, 0.25, 0.13, 1)
+roughness = 0.62
 
-[sub_resource type="StandardMaterial3D" id="PortalGlow"]
+[sub_resource type="BoxMesh" id="ChestMesh"]
+size = Vector3(0.62, 0.42, 0.18)
+
+[sub_resource type="StandardMaterial3D" id="ChestMat"]
+albedo_color = Color(0.02, 0.08, 0.14, 1)
+metallic = 0.7
+roughness = 0.25
+
+[sub_resource type="SphereMesh" id="CoreMesh"]
+radius = 0.12
+height = 0.24
+
+[sub_resource type="StandardMaterial3D" id="CoreMat"]
+albedo_color = Color(0.02, 0.2, 0.35, 1)
 emission_enabled = true
-emission = Color(0.1, 0.75, 1, 1)
-emission_energy_multiplier = 4.0
+emission = Color(0.0, 0.85, 1.0, 1)
+emission_energy_multiplier = 6.0
+
+[sub_resource type="BoxMesh" id="LimbMesh"]
+size = Vector3(0.18, 0.72, 0.18)
+
+[sub_resource type="StandardMaterial3D" id="LimbMat"]
+albedo_color = Color(0.035, 0.10, 0.20, 1)
+metallic = 0.35
+roughness = 0.38
+
+[sub_resource type="BoxMesh" id="ArmMesh"]
+size = Vector3(0.22, 0.85, 0.22)
+
+[sub_resource type="StandardMaterial3D" id="ArmMat"]
+albedo_color = Color(0.08, 0.18, 0.32, 1)
+metallic = 0.45
+roughness = 0.3
 
 [sub_resource type="SphereMesh" id="FlashMesh"]
 radius = 0.8
@@ -34,8 +67,20 @@ height = 1.6
 
 [sub_resource type="StandardMaterial3D" id="FlashMat"]
 transparency = 1
+shading_mode = 0
 emission_enabled = true
-emission = Color(0.2, 0.8, 1, 1)
+emission = Color(0.05, 0.75, 1, 1)
+emission_energy_multiplier = 8.0
+
+[sub_resource type="SphereMesh" id="ParticleMesh"]
+radius = 0.055
+height = 0.11
+
+[sub_resource type="StandardMaterial3D" id="ParticleMat"]
+shading_mode = 0
+transparency = 1
+emission_enabled = true
+emission = Color(0.1, 0.75, 1, 1)
 emission_energy_multiplier = 8.0
 
 [node name="Player" type="CharacterBody3D"]
@@ -54,50 +99,141 @@ position = Vector3(0, 0.9, 0)
 
 [node name="Head" type="MeshInstance3D" parent="."]
 mesh = SubResource("HeadMesh")
-material_override = SubResource("HeadMat")
+material_override = SubResource("SkinMat")
 position = Vector3(0, 2.0, 0)
+
+[node name="ChestPlate" type="MeshInstance3D" parent="."]
+mesh = SubResource("ChestMesh")
+material_override = SubResource("ChestMat")
+position = Vector3(0, 1.05, -0.39)
+
+[node name="Core" type="MeshInstance3D" parent="."]
+mesh = SubResource("CoreMesh")
+material_override = SubResource("CoreMat")
+position = Vector3(0, 1.08, -0.50)
+
+[node name="LeftArm" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArmMesh")
+material_override = SubResource("ArmMat")
+position = Vector3(-0.58, 1.0, 0)
+rotation_degrees = Vector3(0, 0, -8)
+
+[node name="RightArm" type="MeshInstance3D" parent="."]
+mesh = SubResource("ArmMesh")
+material_override = SubResource("ArmMat")
+position = Vector3(0.58, 1.0, 0)
+rotation_degrees = Vector3(0, 0, 8)
+
+[node name="LeftLeg" type="MeshInstance3D" parent="."]
+mesh = SubResource("LimbMesh")
+material_override = SubResource("LimbMat")
+position = Vector3(-0.22, 0.38, 0)
+
+[node name="RightLeg" type="MeshInstance3D" parent="."]
+mesh = SubResource("LimbMesh")
+material_override = SubResource("LimbMat")
+position = Vector3(0.22, 0.38, 0)
 
 [node name="CameraPivot" type="Node3D" parent="."]
 position = Vector3(0, 1.65, 0)
 
 [node name="ThirdPersonCamera" type="Camera3D" parent="CameraPivot"]
-position = Vector3(0, 0.35, 5.5)
+position = Vector3(0, 0.45, 6.2)
 rotation_degrees = Vector3(0, 180, 0)
 current = true
-fov = 72.0
+fov = 74.0
 
 [node name="FirstPersonCamera" type="Camera3D" parent="CameraPivot"]
-position = Vector3(0, 0.05, -0.2)
+position = Vector3(0, 0.03, -0.25)
 current = false
-fov = 80.0
+fov = 82.0
+
+[node name="FirstPersonArms" type="Node3D" parent="."]
+visible = false
+
+[node name="LeftArm" type="MeshInstance3D" parent="FirstPersonArms"]
+mesh = SubResource("ArmMesh")
+material_override = SubResource("ArmMat")
+position = Vector3(-0.42, 1.35, -0.62)
+rotation_degrees = Vector3(-12, 0, -18)
+
+[node name="RightArm" type="MeshInstance3D" parent="FirstPersonArms"]
+mesh = SubResource("ArmMesh")
+material_override = SubResource("ArmMat")
+position = Vector3(0.42, 1.35, -0.62)
+rotation_degrees = Vector3(-12, 0, 18)
+
+[node name="FirstPersonCore" type="MeshInstance3D" parent="FirstPersonArms"]
+mesh = SubResource("CoreMesh")
+material_override = SubResource("CoreMat")
+position = Vector3(0, 1.05, -0.65)
 
 [node name="TeleportFlash" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 24
-lifetime = 0.35
+amount = 32
+lifetime = 0.4
+
+[node name="FlightFX" type="CPUParticles3D" parent="."]
+emitting = false
+amount = 36
+lifetime = 0.65
+local_coords = true
+direction = Vector3(0, -1, 0)
+spread = 35.0
+gravity = Vector3(0, -3, 0)
+initial_velocity_min = 2.0
+initial_velocity_max = 6.0
+scale_amount_min = 0.35
+scale_amount_max = 0.8
+mesh = SubResource("ParticleMesh")
+color = Color(0.05, 0.75, 1, 0.85)
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
 [node name="Health" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 22.0
-offset_right = 260.0
+offset_right = 400.0
 offset_bottom = 52.0
 theme_override_font_sizes/font_size = 22
-text = "HEALTH 100"
+text = "HP 100   STAMINA 100"
+
+[node name="Status" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 56.0
+offset_right = 720.0
+offset_bottom = 84.0
+theme_override_font_sizes/font_size = 17
+text = "THIRD PERSON"
+
+[node name="Speed" type="Label" parent="HUD"]
+offset_left = 24.0
+offset_top = 86.0
+offset_right = 400.0
+offset_bottom = 112.0
+theme_override_font_sizes/font_size = 15
+text = "SPEED 000   ALT 0000"
 
 [node name="Controls" type="Label" parent="HUD"]
 offset_left = 24.0
-offset_top = 54.0
-offset_right = 620.0
-offset_bottom = 180.0
-theme_override_font_sizes/font_size = 15
-text = "WASD Move   SHIFT Sprint   SPACE Jump/Fly\nV Camera   LMB Attack   RMB Block   Q Dodge\nF Flight   T Teleport   Z/X Size   E Portal"
+offset_top = 118.0
+offset_right = 760.0
+offset_bottom = 202.0
+theme_override_font_sizes/font_size = 14
+text = "WASD MOVE   SHIFT SPRINT   SPACE JUMP / FLY UP   CTRL FLY DOWN\nV CAMERA   F FLIGHT   SHIFT BOOST   Q DODGE   R SUPER JUMP\nLMB ATTACK   RMB BLOCK   T TELEPORT   Z/X SIZE   E PORTAL"
+
+[node name="Crosshair" type="Label" parent="HUD"]
+offset_left = 632.0
+offset_top = 342.0
+offset_right = 648.0
+offset_bottom = 370.0
+theme_override_font_sizes/font_size = 22
+text = "•"
 
 [node name="SizeIndicator" type="Label" parent="."]
 offset_left = 24.0
-offset_top = 190.0
+offset_top = 210.0
 offset_right = 300.0
-offset_bottom = 220.0
+offset_bottom = 240.0
 theme_override_font_sizes/font_size = 18
-text = "SIZE: NORMAL"
+text = "SIZE  NORMAL"
