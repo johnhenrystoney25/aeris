@@ -37,7 +37,7 @@ var _last_safe_position := Vector3.ZERO
 @onready var status_label: Label = $HUD/Status
 @onready var speed_label: Label = $HUD/Speed
 @onready var crosshair: Label = $HUD/Crosshair
-@onready var flight_fx: GPUParticles3D = $FlightFX
+@onready var flight_fx: CPUParticles3D = $FlightFX
 
 func _ready() -> void:
     Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
@@ -97,7 +97,9 @@ func _physics_process(delta: float) -> void:
     right.y = 0.0
     forward = forward.normalized()
     right = right.normalized()
-    var direction := (right * input_vec.x + forward * -input_vec.y).normalized()
+    # With move_back as negative-Y and move_forward as positive-Y, W/Up is +Y here.
+    # Adding +forward makes W move along camera forward (-Z), while S moves backward.
+    var direction := (right * input_vec.x + forward * input_vec.y).normalized()
     var size_multiplier := lerpf(0.55, 1.35, inverse_lerp(-2.0, 2.0, size_level))
     var speed := sprint_speed if Input.is_action_pressed("sprint") else walk_speed
     speed *= size_multiplier
