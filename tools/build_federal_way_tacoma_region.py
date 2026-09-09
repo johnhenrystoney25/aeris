@@ -28,6 +28,7 @@ def run(args):
 def main():
     TILES.mkdir(parents=True, exist_ok=True)
     downloader = [sys.executable, str(ROOT / "tools" / "download_osm_region.py")]
+
     for i, (s, w, n, e) in enumerate(BOUNDS, 1):
         target = TILES / f"tile_{i:02d}.osm"
         if target.exists() and target.stat().st_size > 1024:
@@ -35,8 +36,16 @@ def main():
             continue
         run(downloader + [str(s), str(w), str(n), str(e), str(target)])
 
-    osm_files = [str(TILES / f"tile_{i:02d}.osm") for i in range(1, 10)]
-    run([sys.executable, str(ROOT / "tools" / "merge_osm_xml.py"), *osm_files, str(MERGED)])
+    osm_files = [TILES / f"tile_{i:02d}.osm" for i in range(1, 10)]
+    missing = [p for p in osm_files if not p.exists() or p.stat().st_size <= 1024]
+    if missing:
+        print("\nSTOP: these OSM tiles are still missing or incomplete:")
+        for path in missing:
+            print(f"  - {path}")
+        raise SystemExit(2)
+
+    # merge_osm_xml.py expects: output.osm input1.osm input2.osm ...
+    run([sys.executable, str(ROOT / "tools" / "merge_osm_xml.py"), str(MERGED), *map(str, osm_files)])
     run([sys.executable, str(ROOT / "tools" / "osm_to_region.py"), str(MERGED), str(REGION)])
     print(f"\nDONE: {REGION}")
     print("The game region is now generated from all nine real-world OSM tiles.")
