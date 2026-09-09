@@ -112,7 +112,13 @@ func _physics_process(delta: float) -> void:
         _boost_timer = 0.2
         stamina -= 18.0 * delta
 
-    var input_vec := Input.get_vector("move_left", "move_right", "move_back", "move_forward")
+    # Explicit WASD mapping: W forward, S back, A left, D right.
+    var forward_input := Input.get_action_strength("move_forward") - Input.get_action_strength("move_back")
+    var right_input := Input.get_action_strength("move_right") - Input.get_action_strength("move_left")
+    var input_vec := Vector2(right_input, forward_input)
+    if input_vec.length_squared() > 1.0:
+        input_vec = input_vec.normalized()
+
     var camera_basis := pivot.global_transform.basis
     var forward := -camera_basis.z
     var right := camera_basis.x
@@ -120,7 +126,7 @@ func _physics_process(delta: float) -> void:
     right.y = 0.0
     forward = forward.normalized()
     right = right.normalized()
-    var direction := (right * input_vec.x + forward * input_vec.y)
+    var direction := right * input_vec.x + forward * input_vec.y
     if direction.length_squared() > 0.01:
         direction = direction.normalized()
         _last_move_direction = direction
@@ -174,7 +180,6 @@ func _fly(delta: float, direction: Vector3) -> void:
     if Input.is_action_pressed("flight_down"):
         vertical -= 1.0
 
-    # Looking upward/downward while moving also gives flight pitch control.
     if absf(vertical) < 0.1 and direction.length_squared() > 0.01 and absf(look_dir.y) > 0.3:
         vertical = look_dir.y * 0.8
 
@@ -194,12 +199,12 @@ func _fly(delta: float, direction: Vector3) -> void:
         target_velocity = Vector3.UP * vertical * flight_vertical_speed
 
     velocity = velocity.lerp(target_velocity, minf(1.0, delta * flight_acceleration))
-    if fly_dir.length_squared() > 0.01:
-        rotation.y = lerp_angle(rotation.y, atan2(-fly_dir.x, -fly_dir.z), minf(1.0, delta * 5.0))
-
+    # IMPORTANT: flight no longer rotates the player every physics frame.
+    # Mouse yaw owns player rotation. This prevents the left/right oscillation
+    # caused by flight direction fighting mouse-look rotation.
     flight_fx.emitting = true
 
-func _update_wall_traversal(delta: float, direction: Vector3, speed: float) -> void:
+func _update_wall_traversal(delta: float, direction: Vector3, _speed: float) -> void:
     if is_on_floor():
         _wall_grace_timer = 0.0
         return
