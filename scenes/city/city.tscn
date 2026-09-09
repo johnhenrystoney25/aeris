@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=14 format=3]
 
 [ext_resource path="res://scripts/world/main_world.gd" type="Script" id="1"]
 [ext_resource path="res://scripts/world/osm_region_runtime.gd" type="Script" id="2"]
@@ -63,6 +63,7 @@ shadow_enabled = true
 [node name="RecordedGeography" type="Node3D" parent="."]
 script = ExtResource("2")
 region_file = "res://data/geography/federal_way_tacoma_region.json"
+fallback_enabled = true
 
 [node name="Ground" type="StaticBody3D" parent="."]
 [node name="Mesh" type="MeshInstance3D" parent="Ground"]
@@ -102,6 +103,13 @@ position = Vector3(0, 3, 0)
 text = "MICRO REALITY"
 font_size = 64
 outline_size = 8
+
+[node name="BuildMarker" type="Label3D" parent="."]
+position = Vector3(0, 10, 2)
+text = "FEDERAL WAY → TACOMA\nRECORDED-GEOGRAPHY BUILD\nBUILD 2026-09-09"
+font_size = 56
+outline_size = 12
+modulate = Color(0.2, 0.85, 1, 1)
 
 [node name="CityTitle" type="Label3D" parent="."]
 position = Vector3(0, 8, -18)
