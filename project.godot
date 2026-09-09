@@ -1,0 +1,47 @@
+; THE MULTIVERSE - Godot 4 project
+; Initial vertical-slice foundation.
+config_version=5
+
+[application]
+config/name="THE MULTIVERSE"
+run/main_scene="res://scenes/main/main.tscn"
+config/features=PackedStringArray("4.5", "GL Compatibility")
+boot_splash/bg_color=Color(0.015, 0.02, 0.035, 1)
+
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/size/window_width_override=1280
+window/size/window_height_override=720
+window/stretch/mode="canvas_items"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=false
+
+[input]
+move_forward={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":87),Object(InputEventKey,"physical_keycode":4194320)]}
+move_back={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":83),Object(InputEventKey,"physical_keycode":4194322)]}
+move_left={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":65),Object(InputEventKey,"physical_keycode":4194319)]}
+move_right={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":68),Object(InputEventKey,"physical_keycode":4194321)]}
+jump={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":32)]}
+sprint={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":4194325),Object(InputEventKey,"physical_keycode":16777237)]}
+toggle_camera={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":86)]}
+attack={"deadzone":0.2,"events":[Object(InputEventMouseButton,"button_index":1)]}
+block={"deadzone":0.2,"events":[Object(InputEventMouseButton,"button_index":2)]}
+dodge={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":81)]}
+ability_flight={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":70)]}
+ability_teleport={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":84)]}
+ability_size_down={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":90)]}
+ability_size_up={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":88)]}
+portal_use={"deadzone":0.2,"events":[Object(InputEventKey,"physical_keycode":69)]}
+
+[physics]
+common/enable_pause_aware_picking=true
+
+[layer_names]
+3d_physics/layer_1="World"
+3d_physics/layer_2="Player"
+3d_physics/layer_3="Characters"
+3d_physics/layer_4="Portal"
