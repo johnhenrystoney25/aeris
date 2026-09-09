@@ -1,9 +1,9 @@
 ; THE MULTIVERSE - Godot 4 project
-; Initial vertical-slice foundation.
+; Federal Way / Tacoma geography build
 config_version=5
 
 [application]
-config/name="THE MULTIVERSE"
+config/name="THE MULTIVERSE — FEDERAL WAY / TACOMA GEO BUILD"
 run/main_scene="res://scenes/main/main.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 boot_splash/bg_color=Color(0.015, 0.02, 0.035, 1)
