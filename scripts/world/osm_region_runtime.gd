@@ -18,6 +18,7 @@ var _park_chunks: Dictionary = {}
 var _water_chunks: Dictionary = {}
 var _rail_chunks: Dictionary = {}
 var _loaded_chunks: Dictionary = {}
+var _stream_center := Vector2i.ZERO
 var _building_index := 0
 var _data_loaded := false
 var _fallback_active := false
@@ -68,7 +69,8 @@ func load_region(path: String) -> void:
 func update_streaming(player_position: Vector3) -> void:
     if not _data_loaded or _fallback_active:
         return
-    var center := _chunk_key(player_position)
+    _stream_center = _chunk_key(player_position)
+    var center := _stream_center
     var wanted: Dictionary = {}
     for x in range(center.x - stream_radius, center.x + stream_radius + 1):
         for z in range(center.y - stream_radius, center.y + stream_radius + 1):
@@ -192,8 +194,7 @@ func _unload_chunk(key: Vector2i) -> void:
     _loaded_chunks.erase(key)
 
 func _is_within_collision_radius(key: Vector2i) -> bool:
-    var center := _chunk_key(Vector3.ZERO)
-    return abs(key.x - center.x) <= collision_radius and abs(key.y - center.y) <= collision_radius
+    return abs(key.x - _stream_center.x) <= collision_radius and abs(key.y - _stream_center.y) <= collision_radius
 
 func _road_into(parent: Node3D, raw: Array, width: float, road_class: String) -> void:
     var points := _points(raw)
