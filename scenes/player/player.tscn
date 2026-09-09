@@ -1,97 +1,142 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=28 format=3]
 
 [ext_resource path="res://scripts/player/player.gd" type="Script" id="1"]
+[ext_resource path="res://scripts/player/player_visuals.gd" type="Script" id="2"]
 
 [sub_resource type="CapsuleShape3D" id="Capsule"]
-radius = 0.82
-height = 3.55
-
-[sub_resource type="CapsuleMesh" id="TorsoMesh"]
-radius = 0.78
-height = 2.35
-radial_segments = 32
-rings = 12
+radius = 1.02
+height = 5.25
 
 [sub_resource type="StandardMaterial3D" id="SkinMat"]
-albedo_color = Color(0.16, 0.42, 0.12, 1)
-roughness = 0.72
+albedo_color = Color(0.12, 0.34, 0.07, 1)
+roughness = 0.58
 
-[sub_resource type="SphereMesh" id="ChestMesh"]
-radius = 0.9
-height = 1.25
-radial_segments = 32
+[sub_resource type="StandardMaterial3D" id="SkinDarkMat"]
+albedo_color = Color(0.075, 0.22, 0.035, 1)
+roughness = 0.64
+
+[sub_resource type="StandardMaterial3D" id="PantsMat"]
+albedo_color = Color(0.018, 0.021, 0.024, 1)
+roughness = 0.82
+
+[sub_resource type="StandardMaterial3D" id="MouthMat"]
+albedo_color = Color(0.012, 0.008, 0.006, 1)
+roughness = 0.92
+
+[sub_resource type="StandardMaterial3D" id="ToothMat"]
+albedo_color = Color(0.82, 0.84, 0.72, 1)
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="EyeMat"]
+albedo_color = Color(1, 0.48, 0.035, 1)
+emission_enabled = true
+emission = Color(1, 0.12, 0.01, 1)
+emission_energy_multiplier = 3.2
+roughness = 0.22
+
+[sub_resource type="StandardMaterial3D" id="HairMat"]
+albedo_color = Color(0.012, 0.009, 0.007, 1)
+roughness = 0.9
+
+[sub_resource type="CapsuleMesh" id="TorsoMesh"]
+radius = 0.88
+height = 2.55
+radial_segments = 48
 rings = 16
 
+[sub_resource type="SphereMesh" id="PecMesh"]
+radius = 0.82
+height = 1.28
+radial_segments = 40
+rings = 24
+
 [sub_resource type="CapsuleMesh" id="AbdomenMesh"]
-radius = 0.52
+radius = 0.62
+height = 1.45
+radial_segments = 40
+rings = 14
+
+[sub_resource type="SphereMesh" id="ShoulderMesh"]
+radius = 0.63
 height = 1.15
-radial_segments = 28
-rings = 10
-
-[sub_resource type="CapsuleMesh" id="NeckMesh"]
-radius = 0.38
-height = 0.62
-radial_segments = 24
-rings = 8
-
-[sub_resource type="SphereMesh" id="HeadMesh"]
-radius = 0.55
-height = 1.05
 radial_segments = 32
 rings = 20
 
 [sub_resource type="CapsuleMesh" id="ArmMesh"]
-radius = 0.36
-height = 1.18
-radial_segments = 24
-rings = 10
-
-[sub_resource type="CapsuleMesh" id="ForearmMesh"]
-radius = 0.32
-height = 1.08
-radial_segments = 24
-rings = 10
-
-[sub_resource type="SphereMesh" id="HandMesh"]
-radius = 0.43
-height = 0.82
-radial_segments = 24
+radius = 0.40
+height = 1.45
+radial_segments = 40
 rings = 14
 
+[sub_resource type="CapsuleMesh" id="ForearmMesh"]
+radius = 0.37
+height = 1.38
+radial_segments = 40
+rings = 14
+
+[sub_resource type="SphereMesh" id="HandMesh"]
+radius = 0.46
+height = 0.92
+radial_segments = 32
+rings = 20
+
 [sub_resource type="CapsuleMesh" id="ThighMesh"]
-radius = 0.48
-height = 1.48
-radial_segments = 28
-rings = 12
+radius = 0.56
+height = 1.75
+radial_segments = 40
+rings = 16
 
 [sub_resource type="CapsuleMesh" id="CalfMesh"]
-radius = 0.40
-height = 1.32
-radial_segments = 28
-rings = 12
+radius = 0.46
+height = 1.55
+radial_segments = 40
+rings = 16
 
 [sub_resource type="BoxMesh" id="FootMesh"]
-size = Vector3(0.72, 0.38, 1.08)
+size = Vector3(0.86, 0.48, 1.32)
 
-[sub_resource type="StandardMaterial3D" id="PantsMat"]
-albedo_color = Color(0.025, 0.028, 0.032, 1)
-roughness = 0.9
+[sub_resource type="CapsuleMesh" id="NeckMesh"]
+radius = 0.45
+height = 0.72
+radial_segments = 32
+rings = 12
+
+[sub_resource type="SphereMesh" id="HeadMesh"]
+radius = 0.66
+height = 1.25
+radial_segments = 48
+rings = 28
+
+[sub_resource type="SphereMesh" id="JawMesh"]
+radius = 0.54
+height = 0.62
+radial_segments = 40
+rings = 20
+
+[sub_resource type="SphereMesh" id="NoseMesh"]
+radius = 0.20
+height = 0.38
+radial_segments = 24
+rings = 12
+
+[sub_resource type="BoxMesh" id="MouthMesh"]
+size = Vector3(0.62, 0.16, 0.08)
 
 [sub_resource type="SphereMesh" id="EyeMesh"]
-radius = 0.075
-height = 0.15
-radial_segments = 16
-rings = 8
+radius = 0.085
+height = 0.17
+radial_segments = 20
+rings = 12
 
-[sub_resource type="StandardMaterial3D" id="EyeMat"]
-albedo_color = Color(0.95, 0.58, 0.08, 1)
-emission_enabled = true
-emission = Color(0.95, 0.28, 0.02, 1)
-emission_energy_multiplier = 2.0
+[sub_resource type="SphereMesh" id="HairMesh"]
+radius = 0.68
+height = 0.70
+radial_segments = 40
+rings = 20
 
 [sub_resource type="SphereMesh" id="CoreMesh"]
-radius = 0.13
-height = 0.26
+radius = 0.15
+height = 0.30
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1")
@@ -100,155 +145,247 @@ collision_mask = 1
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("Capsule")
-position = Vector3(0, 1.78, 0)
+position = Vector3(0, 2.62, 0)
 
 [node name="Body" type="MeshInstance3D" parent="."]
 mesh = SubResource("TorsoMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0, 1.72, 0)
-scale = Vector3(1.18, 1.0, 0.78)
+position = Vector3(0, 2.78, 0)
+scale = Vector3(1.34, 1.0, 0.84)
+script = ExtResource("2")
 
 [node name="Chest" type="MeshInstance3D" parent="."]
-mesh = SubResource("ChestMesh")
+mesh = SubResource("PecMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0, 2.18, -0.05)
-scale = Vector3(1.15, 0.72, 0.72)
+position = Vector3(0, 3.52, -0.16)
+scale = Vector3(1.48, 0.82, 0.82)
+
+[node name="Pec_L" type="MeshInstance3D" parent="."]
+mesh = SubResource("PecMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(-0.50, 3.50, -0.62)
+scale = Vector3(0.68, 0.45, 0.18)
+
+[node name="Pec_R" type="MeshInstance3D" parent="."]
+mesh = SubResource("PecMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(0.50, 3.50, -0.62)
+scale = Vector3(0.68, 0.45, 0.18)
 
 [node name="Abdomen" type="MeshInstance3D" parent="."]
 mesh = SubResource("AbdomenMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0, 1.35, -0.02)
-scale = Vector3(1.12, 0.92, 0.82)
+position = Vector3(0, 2.58, -0.05)
+scale = Vector3(1.13, 1.0, 0.82)
+
+[node name="Oblique_L" type="MeshInstance3D" parent="."]
+mesh = SubResource("AbdomenMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(-0.72, 2.72, -0.49)
+scale = Vector3(0.35, 0.72, 0.22)
+rotation_degrees = Vector3(0, 0, -9)
+
+[node name="Oblique_R" type="MeshInstance3D" parent="."]
+mesh = SubResource("AbdomenMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(0.72, 2.72, -0.49)
+scale = Vector3(0.35, 0.72, 0.22)
+rotation_degrees = Vector3(0, 0, 9)
 
 [node name="Pelvis" type="MeshInstance3D" parent="."]
-mesh = SubResource("ChestMesh")
+mesh = SubResource("PecMesh")
 material_override = SubResource("PantsMat")
-position = Vector3(0, 0.78, 0)
-scale = Vector3(0.82, 0.46, 0.66)
+position = Vector3(0, 1.65, 0)
+scale = Vector3(0.98, 0.58, 0.72)
 
 [node name="Neck" type="MeshInstance3D" parent="."]
 mesh = SubResource("NeckMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0, 2.88, 0)
-scale = Vector3(1.05, 1.0, 1.0)
+position = Vector3(0, 4.40, 0)
+scale = Vector3(1.08, 1.0, 1.0)
+
+[node name="Trap_L" type="MeshInstance3D" parent="."]
+mesh = SubResource("ShoulderMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(-0.64, 4.18, 0)
+scale = Vector3(1.18, 0.58, 0.82)
+rotation_degrees = Vector3(0, 0, -16)
+
+[node name="Trap_R" type="MeshInstance3D" parent="."]
+mesh = SubResource("ShoulderMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(0.64, 4.18, 0)
+scale = Vector3(1.18, 0.58, 0.82)
+rotation_degrees = Vector3(0, 0, 16)
 
 [node name="Head" type="MeshInstance3D" parent="."]
 mesh = SubResource("HeadMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0, 3.55, 0)
-scale = Vector3(0.98, 1.08, 0.9)
+position = Vector3(0, 5.18, -0.02)
+scale = Vector3(1.02, 1.10, 0.92)
+
+[node name="Jaw" type="MeshInstance3D" parent="."]
+mesh = SubResource("JawMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(0, 4.86, -0.40)
+scale = Vector3(1.08, 0.82, 0.60)
+
+[node name="Brow_L" type="MeshInstance3D" parent="."]
+mesh = SubResource("JawMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(-0.24, 5.31, -0.57)
+scale = Vector3(0.55, 0.16, 0.12)
+rotation_degrees = Vector3(0, 0, -9)
+
+[node name="Brow_R" type="MeshInstance3D" parent="."]
+mesh = SubResource("JawMesh")
+material_override = SubResource("SkinDarkMat")
+position = Vector3(0.24, 5.31, -0.57)
+scale = Vector3(0.55, 0.16, 0.12)
+rotation_degrees = Vector3(0, 0, 9)
+
+[node name="Nose" type="MeshInstance3D" parent="."]
+mesh = SubResource("NoseMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(0, 5.10, -0.64)
+scale = Vector3(1.0, 1.05, 0.85)
+
+[node name="Mouth" type="MeshInstance3D" parent="."]
+mesh = SubResource("MouthMesh")
+material_override = SubResource("MouthMat")
+position = Vector3(0, 4.82, -0.78)
 
 [node name="Eye_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("EyeMesh")
 material_override = SubResource("EyeMat")
-position = Vector3(-0.22, 3.62, -0.47)
+position = Vector3(-0.25, 5.22, -0.60)
+scale = Vector3(1.12, 0.62, 0.55)
 
 [node name="Eye_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("EyeMesh")
 material_override = SubResource("EyeMat")
-position = Vector3(0.22, 3.62, -0.47)
+position = Vector3(0.25, 5.22, -0.60)
+scale = Vector3(1.12, 0.62, 0.55)
+
+[node name="Hair" type="MeshInstance3D" parent="."]
+mesh = SubResource("HairMesh")
+material_override = SubResource("HairMat")
+position = Vector3(0, 5.67, 0.02)
+scale = Vector3(1.02, 0.42, 0.92)
 
 [node name="UpperArm_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-1.02, 2.15, 0)
-rotation_degrees = Vector3(0, 0, -16)
-scale = Vector3(1.25, 1.12, 1.15)
+position = Vector3(-1.42, 3.42, 0)
+rotation_degrees = Vector3(0, 0, -12)
+scale = Vector3(1.28, 1.18, 1.20)
 
 [node name="UpperArm_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("ArmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(1.02, 2.15, 0)
-rotation_degrees = Vector3(0, 0, 16)
-scale = Vector3(1.25, 1.12, 1.15)
+position = Vector3(1.42, 3.42, 0)
+rotation_degrees = Vector3(0, 0, 12)
+scale = Vector3(1.28, 1.18, 1.20)
+
+[node name="Shoulder_L" type="MeshInstance3D" parent="."]
+mesh = SubResource("ShoulderMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(-1.16, 3.92, 0)
+scale = Vector3(1.18, 1.05, 1.05)
+
+[node name="Shoulder_R" type="MeshInstance3D" parent="."]
+mesh = SubResource("ShoulderMesh")
+material_override = SubResource("SkinMat")
+position = Vector3(1.16, 3.92, 0)
+scale = Vector3(1.18, 1.05, 1.05)
 
 [node name="Forearm_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("ForearmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-1.30, 1.25, -0.01)
-rotation_degrees = Vector3(0, 0, -8)
-scale = Vector3(1.18, 1.15, 1.12)
+position = Vector3(-1.70, 2.40, -0.03)
+rotation_degrees = Vector3(0, 0, -7)
+scale = Vector3(1.18, 1.18, 1.12)
 
 [node name="Forearm_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("ForearmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(1.30, 1.25, -0.01)
-rotation_degrees = Vector3(0, 0, 8)
-scale = Vector3(1.18, 1.15, 1.12)
+position = Vector3(1.70, 2.40, -0.03)
+rotation_degrees = Vector3(0, 0, 7)
+scale = Vector3(1.18, 1.18, 1.12)
 
 [node name="Hand_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("HandMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-1.40, 0.45, -0.02)
-scale = Vector3(1.08, 1.18, 0.92)
+position = Vector3(-1.82, 1.42, -0.08)
+scale = Vector3(1.08, 1.28, 0.94)
 
 [node name="Hand_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("HandMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(1.40, 0.45, -0.02)
-scale = Vector3(1.08, 1.18, 0.92)
+position = Vector3(1.82, 1.42, -0.08)
+scale = Vector3(1.08, 1.28, 0.94)
 
 [node name="Thigh_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("ThighMesh")
 material_override = SubResource("PantsMat")
-position = Vector3(-0.52, 0.20, 0)
-scale = Vector3(1.12, 1.05, 1.08)
+position = Vector3(-0.64, 0.92, 0)
+scale = Vector3(1.16, 1.05, 1.10)
 
 [node name="Thigh_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("ThighMesh")
 material_override = SubResource("PantsMat")
-position = Vector3(0.52, 0.20, 0)
-scale = Vector3(1.12, 1.05, 1.08)
+position = Vector3(0.64, 0.92, 0)
+scale = Vector3(1.16, 1.05, 1.10)
 
 [node name="Calf_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("CalfMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-0.48, -0.82, 0)
-scale = Vector3(1.0, 1.08, 0.98)
+position = Vector3(-0.62, -0.45, 0)
+scale = Vector3(1.08, 1.08, 1.04)
 
 [node name="Calf_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("CalfMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0.48, -0.82, 0)
-scale = Vector3(1.0, 1.08, 0.98)
+position = Vector3(0.62, -0.45, 0)
+scale = Vector3(1.08, 1.08, 1.04)
 
 [node name="Foot_L" type="MeshInstance3D" parent="."]
 mesh = SubResource("FootMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-0.48, -1.55, -0.20)
+position = Vector3(-0.62, -1.28, -0.22)
 
 [node name="Foot_R" type="MeshInstance3D" parent="."]
 mesh = SubResource("FootMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0.48, -1.55, -0.20)
+position = Vector3(0.62, -1.28, -0.22)
 
 [node name="CenterMass" type="Marker3D" parent="."]
-position = Vector3(0, 1.55, 0)
+position = Vector3(0, 2.65, 0)
 
 [node name="HandAnchor_L" type="Marker3D" parent="."]
-position = Vector3(-1.42, 0.45, -0.25)
+position = Vector3(-1.84, 1.40, -0.36)
 
 [node name="HandAnchor_R" type="Marker3D" parent="."]
-position = Vector3(1.42, 0.45, -0.25)
+position = Vector3(1.84, 1.40, -0.36)
 
 [node name="FootAnchor_L" type="Marker3D" parent="."]
-position = Vector3(-0.48, -1.55, -0.38)
+position = Vector3(-0.62, -1.28, -0.52)
 
 [node name="FootAnchor_R" type="Marker3D" parent="."]
-position = Vector3(0.48, -1.55, -0.38)
+position = Vector3(0.62, -1.28, -0.52)
 
 [node name="CameraPivot" type="Node3D" parent="."]
-position = Vector3(0, 2.45, 0)
+position = Vector3(0, 3.55, 0)
 
 [node name="ThirdPersonCamera" type="Camera3D" parent="CameraPivot"]
-position = Vector3(0, 0.65, 8.5)
+position = Vector3(0, 0.85, 11.5)
 current = true
-fov = 72.0
+fov = 70.0
 
 [node name="FirstPersonCamera" type="Camera3D" parent="CameraPivot"]
-position = Vector3(0, 0.45, -0.42)
+position = Vector3(0, 0.35, -0.58)
 current = false
-fov = 80.0
+fov = 82.0
 
 [node name="FirstPersonArms" type="Node3D" parent="."]
 visible = false
@@ -256,39 +393,39 @@ visible = false
 [node name="LeftArm" type="MeshInstance3D" parent="FirstPersonArms"]
 mesh = SubResource("ForearmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(-0.62, 0.95, -0.78)
-rotation_degrees = Vector3(-15, 0, -20)
-scale = Vector3(1.2, 1.2, 1.1)
+position = Vector3(-0.70, 0.95, -0.95)
+rotation_degrees = Vector3(-18, 0, -21)
+scale = Vector3(1.18, 1.25, 1.12)
 
 [node name="RightArm" type="MeshInstance3D" parent="FirstPersonArms"]
 mesh = SubResource("ForearmMesh")
 material_override = SubResource("SkinMat")
-position = Vector3(0.62, 0.95, -0.78)
-rotation_degrees = Vector3(-15, 0, 20)
-scale = Vector3(1.2, 1.2, 1.1)
+position = Vector3(0.70, 0.95, -0.95)
+rotation_degrees = Vector3(-18, 0, 21)
+scale = Vector3(1.18, 1.25, 1.12)
 
 [node name="FirstPersonCore" type="MeshInstance3D" parent="FirstPersonArms"]
 mesh = SubResource("CoreMesh")
 material_override = SubResource("EyeMat")
-position = Vector3(0, 0.45, -0.85)
+position = Vector3(0, 0.42, -1.0)
 
 [node name="TeleportFlash" type="GPUParticles3D" parent="."]
 emitting = false
-amount = 32
-lifetime = 0.4
+amount = 48
+lifetime = 0.45
 
 [node name="FlightFX" type="CPUParticles3D" parent="."]
 emitting = false
-amount = 36
+amount = 44
 lifetime = 0.65
 local_coords = true
 direction = Vector3(0, -1, 0)
 spread = 35.0
 gravity = Vector3(0, -3, 0)
 initial_velocity_min = 2.0
-initial_velocity_max = 6.0
+initial_velocity_max = 7.0
 scale_amount_min = 0.35
-scale_amount_max = 0.8
+scale_amount_max = 0.9
 
 [node name="HUD" type="CanvasLayer" parent="."]
 
@@ -303,7 +440,7 @@ text = "HP 100   STAMINA 100"
 [node name="Status" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 56.0
-offset_right = 720.0
+offset_right = 900.0
 offset_bottom = 84.0
 theme_override_font_sizes/font_size = 17
 text = "THIRD PERSON"
@@ -319,7 +456,7 @@ text = "SPEED 000   ALT 0000"
 [node name="Controls" type="Label" parent="HUD"]
 offset_left = 24.0
 offset_top = 118.0
-offset_right = 760.0
+offset_right = 900.0
 offset_bottom = 202.0
 theme_override_font_sizes/font_size = 14
 text = "WASD MOVE   SHIFT SPRINT   SPACE JUMP / FLY UP   CTRL FLY DOWN\nV CAMERA   F FLIGHT   SHIFT BOOST   Q DODGE   R SUPER JUMP\nLMB ATTACK   RMB BLOCK   T TELEPORT   Z/X SIZE   E PORTAL"
