@@ -62,7 +62,10 @@ func _physics_process(delta: float) -> void:
     if Input.is_action_just_pressed("dodge"):
         _dodge_timer = 0.22
 
-    var input_vec := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+    # InputMap uses move_forward/move_back for the physical W/S direction.
+    # Input.get_vector returns +Y for its second positive action, so forward
+    # must be the negative Y side of the vector before applying -Z forward.
+    var input_vec := Input.get_vector("move_left", "move_right", "move_back", "move_forward")
     var direction := (transform.basis * Vector3(input_vec.x, 0.0, input_vec.y)).normalized()
     var speed := sprint_speed if Input.is_action_pressed("sprint") else walk_speed
     speed *= lerpf(0.55, 1.35, inverse_lerp(-2.0, 2.0, size_level))
@@ -71,8 +74,6 @@ func _physics_process(delta: float) -> void:
         var fly_dir := direction
         if Input.is_action_pressed("jump"):
             fly_dir.y += 1.0
-        if Input.is_action_pressed("ability_size_down"):
-            fly_dir.y -= 1.0
         velocity = fly_dir.normalized() * speed
     else:
         if not is_on_floor():
